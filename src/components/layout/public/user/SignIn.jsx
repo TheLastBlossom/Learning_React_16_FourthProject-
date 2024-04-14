@@ -24,6 +24,10 @@ export const SignIn = () => {
             setLogin('OK');
             localStorage.setItem('token', response.token);
             localStorage.setItem('user', JSON.stringify(response.message));
+            // setAuth(response.message);
+            setTimeout(()=>{
+                window.location.reload();
+            }, 200);
         }else{
             setLogin('ERROR');
         }

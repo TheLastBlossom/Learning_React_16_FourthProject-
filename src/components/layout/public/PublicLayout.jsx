@@ -1,12 +1,16 @@
+import useAuth from "../../../hooks/useAuth"
 import { Header } from "./Header"
-import { Outlet } from 'react-router-dom'
-
+import { Navigate, Outlet } from 'react-router-dom'
 export const PublicLayout = () => {
+    const { auth } = useAuth();       
     return (
         <>
             <Header></Header>
             <section className="layout_content">
-                <Outlet></Outlet>
+                
+                {auth._id ?
+                    <Navigate to='/network' /> : <Outlet></Outlet>
+                }
             </section>
         </>
     )

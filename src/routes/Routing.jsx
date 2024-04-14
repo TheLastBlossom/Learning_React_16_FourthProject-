@@ -4,7 +4,10 @@ import { SignIn } from "../components/layout/public/user/SignIn"
 import { SignUp } from "../components/layout/public/user/SignUp"
 import { PrivateLayout } from "../components/layout/private/PrivateLayout"
 import { Feed } from "../components/publication/Feed"
-import { AuthProvider } from "../context/AuthProvider"
+import { AuthProvider } from "../context/AuthContext"
+import { Logout } from "../components/layout/private/user/Logout"
+import { People } from "../components/layout/private/user/People"
+import { Confing } from "../components/layout/private/user/Confing"
 
 export const Routing = () => {
     return (
@@ -19,6 +22,9 @@ export const Routing = () => {
                     <Route path="/network" element={<PrivateLayout />}>
                         <Route index element={<Feed />}></Route>
                         <Route path="feed" element={<Feed />}></Route>
+                        <Route path="logout" element={<Logout />}></Route>
+                        <Route path="people" element={<People />}></Route>
+                        <Route path="config" element={<Confing />}></Route>
                     </Route>
                     <Route path="*" element={
                         <div>
