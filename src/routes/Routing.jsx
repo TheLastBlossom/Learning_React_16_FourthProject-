@@ -8,6 +8,8 @@ import { AuthProvider } from "../context/AuthContext"
 import { Logout } from "../components/layout/private/user/Logout"
 import { People } from "../components/layout/private/user/People"
 import { Confing } from "../components/layout/private/user/Confing"
+import { Following } from "../components/follow/Following"
+import { Followers } from "../components/follow/Followers"
 
 export const Routing = () => {
     return (
@@ -25,6 +27,8 @@ export const Routing = () => {
                         <Route path="logout" element={<Logout />}></Route>
                         <Route path="people" element={<People />}></Route>
                         <Route path="config" element={<Confing />}></Route>
+                        <Route path="following" element={<Following />}></Route>
+                        <Route path="followers" element={<Followers />}></Route>
                     </Route>
                     <Route path="*" element={
                         <div>
