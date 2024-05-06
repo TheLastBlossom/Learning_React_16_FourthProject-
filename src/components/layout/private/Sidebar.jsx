@@ -6,12 +6,13 @@ import { useState } from 'react';
 import { useForm } from '../../../hooks/UseForm';
 export const Sidebar = () => {
     const { auth, counter, setCounter } = useAuth();
-    const { form, changed } = useForm;
+    const { form, changed } = useForm();
     const [isSaved, setIsSaved] = useState('');
     let token = localStorage.getItem('token');
     const savePublication = async (e) => {
         e.preventDefault();
         let publication = form;
+        console.log(form)
         const url = Global.baseUrlApi + '/publication/save';
         let request = await fetch(url, {
             method: 'POST',
@@ -139,8 +140,8 @@ export const Sidebar = () => {
                     <form className="container-form__form-post" onSubmit={savePublication} id='publication_form'>
 
                         <div className="form-post__inputs">
-                            <label htmlFor="post" className="form-post__label">¿Que estas pesando hoy?</label>
-                            <textarea name="text" className="form-post__textarea" onChange={changed}></textarea>
+                            <label htmlFor="text" className="form-post__label">¿Que estas pesando hoy?</label>
+                            <textarea name="text" id='text' className="form-post__textarea" onChange={changed}></textarea>
                         </div>
 
                         <div className="form-post__inputs">

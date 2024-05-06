@@ -3,9 +3,30 @@ import { Link } from 'react-router-dom';
 import avatar from '../../../../assets/img/user.png';
 import { Global } from '../../../../helpers/Global';
 import useAuth from "../../../../hooks/useAuth";
+import { useEffect, useState } from 'react';
+import ReactTimeAgo from 'react-time-ago'
 
 export const UserList = ({ users, loading, setLoading, following, setFollowing, page, maxPage, nextPage }) => {
     const { auth, counter, setCounter } = useAuth();
+    const [loggedFollowing, setLoggedFollowing] = useState([]);
+    const token = localStorage.getItem('token');
+    const getLoggedFollowing = async (nextPage = 1) => {
+        const urlUserList = Global.baseUrlApi + '/follow/following/' + auth._id + '/' + nextPage;
+        setLoading(true);
+        let requestUL = await fetch(urlUserList, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token
+            },
+        });
+
+        const responseUL = await requestUL.json();                      
+        if (responseUL.status == 200) {                       
+            setLoggedFollowing(responseUL.following);
+        }
+        setLoading(false);
+    }    
 
     const newFollow = async (id) => {
         const newFollow = Global.baseUrlApi + '/follow/save';
@@ -23,6 +44,7 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
         if (responseUL.status == 200) {
             let newFollowed = responseUL.followed.followed;
             setFollowing([...following, newFollowed]);
+            setLoggedFollowing([...loggedFollowing, newFollowed]);
             setCounter(
                 {
                     "following": counter.following + 1,
@@ -49,6 +71,7 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
         const responseUL = await requestUL.json();
         if (responseUL.status == 200) {
             setFollowing(following.filter(i => i != id));
+            setLoggedFollowing(loggedFollowing.filter(i => i != id));
             setCounter(
                 {
                     "following": counter.following - 1,
@@ -61,7 +84,10 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
 
     }
 
-    
+    useEffect(()=>{        
+        getLoggedFollowing();
+
+    }, []);
     return (
         <>
             <div className="content__posts">
@@ -83,7 +109,7 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
                                 <div className="post__user-info">
                                     <Link to={"/network/profile/"+user._id} className="user-info__name">{user.name} {user.surname}</Link>
                                     <span className="user-info__divider"> | </span>
-                                    <Link to={"/network/profile/"+user._id} className="user-info__create-date">{user.created_at}</Link>
+                                    <Link to={"/network/profile/"+user._id} className="user-info__create-date">Joined ago: <ReactTimeAgo date={user.created_at} locale="es-ES"/></Link>
                                 </div>
                                 <h4 className="post__content">{user.bio}</h4>
 
@@ -94,7 +120,7 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
 
 
                         {auth._id != user._id && <div className="post__buttons">
-                            {(following !=null && following.includes(user._id)) ? <button className="post__button" onClick={() => unfollow(user._id)}>
+                            {(loggedFollowing.includes(user._id))  ? <button className="post__button" onClick={() => unfollow(user._id)}>
                                 Unfollow
                             </button> : <button onClick={() => newFollow(user._id)} className="post__button post__button--green">
                                 Follow

@@ -1,56 +1,44 @@
-import avatar from '../../assets/img/user.png';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
+import { PublicationList } from './PublicationList';
+import { Global } from '../../helpers/Global';
 export const Feed = () => {
+    const token = localStorage.getItem('token');
+    const [publications, setPublications] = useState([]);
+    const [maxPage, setMaxPage] = useState(0);
+    const [page, setPage] = useState(1);
+
+    const getPublications = async (nextPage = 1, isNew = false) => {
+        const urlPublications = Global.baseUrlApi + '/publication/feed/' + nextPage;
+        if(isNew){
+            setPage(1);
+        }
+        let requestPublications = await fetch(urlPublications, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token
+            }
+        });
+        let responsePublications = await requestPublications.json();
+        console.info(responsePublications)
+        if (responsePublications.status == 200) {
+            setPublications(responsePublications.paginated);
+            setMaxPage(responsePublications.pages);
+        }
+    }
+
+    useEffect(() => {
+        getPublications();
+    }, []);
     return (
         <section className="layout__content">
 
             <header className="content__header">
                 <h1 className="content__title">Timeline</h1>
-                <button className="content__button">Mostrar nuevas</button>
+                <button className="content__button" onClick={()=>getPublications(1, true)}>Mostrar nuevas</button>
             </header>
-
-            <div className="content__posts">
-
-                <div className="posts__post">
-
-                    <div className="post__container">
-
-                        <div className="post__image-user">
-                            <a href="#" className="post__image-link">
-                                <img src={avatar} className="post__user-image" alt="Foto de perfil" />
-                            </a>
-                        </div>
-
-                        <div className="post__body">
-
-                            <div className="post__user-info">
-                                <a href="#" className="user-info__name">Victor Robles</a>
-                                <span className="user-info__divider"> | </span>
-                                <a href="#" className="user-info__create-date">Hace 1 hora</a>
-                            </div>
-
-                            <h4 className="post__content">Hola, buenos dias.</h4>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="post__buttons">
-
-                        <a href="#" className="post__button">
-                            <i className="fa-solid fa-trash-can"></i>
-                        </a>
-
-                    </div>
-
-                </div>
-            </div>
-
-            <div className="content__container-btn">
-                <button className="content__btn-more-post">
-                    Ver mas publicaciones
-                </button>
-            </div>
+            <PublicationList page={page} setPage={setPage} maxPage={maxPage} getPublications={getPublications} publications={publications} />
 
         </section>
 

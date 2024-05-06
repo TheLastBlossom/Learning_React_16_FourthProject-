@@ -5,6 +5,7 @@ import { GetProfile } from '../../../../helpers/GetProfile';
 import { Link, useParams } from 'react-router-dom';
 import { Global } from '../../../../helpers/Global';
 import useAuth from '../../../../hooks/useAuth';
+import { PublicationList } from '../../../publication/PublicationList';
 export const Profile = () => {
     const [user, setUser] = useState({});
     const params = useParams();
@@ -12,6 +13,9 @@ export const Profile = () => {
     const { auth, setCounter, counter } = useAuth();
     const [counterl, setCounterl] = useState({});
     const [iFollow, setIfollow] = useState(false);
+    const [publications, setPublications] = useState([]);
+    const [maxPage, setMaxPage] = useState(0);
+    const [page, setPage] = useState(1);
     const getCounters = async () => {
         const urlCounter = Global.baseUrlApi + '/user/counter/' + params.userId;
         let requestCounter = await fetch(urlCounter, {
@@ -77,6 +81,31 @@ export const Profile = () => {
             );
         }
     }
+
+
+    const getPublications = async (nextPage = 1, newProfile = false) => {
+        if (newProfile) {
+            setPage(nextPage);
+        }
+        const urlPublications = Global.baseUrlApi + '/publication/user/' + params.userId + '/' + nextPage;
+        let requestPublications = await fetch(urlPublications, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token
+            }
+        });
+        let responsePublications = await requestPublications.json();
+        if (responsePublications.status == 200) {
+            if (publications.length > 1 && !newProfile) {
+                setPublications([...publications, ...responsePublications.message]);
+            } else {
+                setPublications(responsePublications.message);
+            }
+            setMaxPage(responsePublications.pages);
+        }
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             let dataUser = await GetProfile(params.userId, setUser);
@@ -86,10 +115,9 @@ export const Profile = () => {
         };
 
         fetchData();
+        getPublications(1, true);
 
     }, [params.userId]);
-
-
     return (
         <section className="layout__content">
             <header className="aside__profile-info">
@@ -103,7 +131,7 @@ export const Profile = () => {
                         <div className="container-names__name">
                             <h1 className='container-names__name_fullname'>{user.name} {user.surname}</h1>&nbsp;
                             {auth._id != user._id &&
-                                (iFollow ? <button className="content__button content__button--right content__button--red" onClick={()=>unfollow(params.userId)}>Unfollow</button> : <button className="content__button content__button--right content__button--green" onClick={()=>newFollow(params.userId)}>Follow</button>)
+                                (iFollow ? <button className="content__button content__button--right content__button--red" onClick={() => unfollow(params.userId)}>Unfollow</button> : <button className="content__button content__button--right content__button--green" onClick={() => newFollow(params.userId)}>Follow</button>)
                             }
                         </div>
                         <h2 className="container-names__nickname">{user.nickname}</h2>
@@ -134,51 +162,7 @@ export const Profile = () => {
                     </div>
                 </div>
             </header>
-
-            <div className="content__posts">
-
-                <div className="posts__post">
-
-                    <div className="post__container">
-
-                        <div className="post__image-user">
-                            <a href="#" className="post__image-link">
-                                <img src={avatar} className="post__user-image" alt="Foto de perfil" />
-                            </a>
-                        </div>
-
-                        <div className="post__body">
-
-                            <div className="post__user-info">
-                                <a href="#" className="user-info__name">Victor Robles</a>
-                                <span className="user-info__divider"> | </span>
-                                <a href="#" className="user-info__create-date">Hace 1 hora</a>
-                            </div>
-
-                            <h4 className="post__content">Hola, buenos dias.</h4>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="post__buttons">
-
-                        <a href="#" className="post__button">
-                            <i className="fa-solid fa-trash-can"></i>
-                        </a>
-
-                    </div>
-
-                </div>
-            </div>
-
-            <div className="content__container-btn">
-                <button className="content__btn-more-post">
-                    Ver mas publicaciones
-                </button>
-            </div>
-
+            <PublicationList page={page} setPage={setPage} maxPage={maxPage} getPublications={getPublications} publications={publications} />
         </section>
 
 

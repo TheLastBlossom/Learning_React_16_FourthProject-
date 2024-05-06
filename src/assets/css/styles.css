@@ -216,7 +216,9 @@ body {
     display: flex;
     flex-direction: row;
 }
-
+.post__image{
+    max-width: 50%;
+}
 .post__image-user {
     display: block;
     width: 7.5rem;
