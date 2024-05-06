@@ -1,12 +1,12 @@
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import avatar from '../../../assets/img/user.png';
 import { Global } from '../../../helpers/Global';
 import useAuth from '../../../hooks/useAuth';
-import { useForm } from '../../../hooks/useForm';
 import { useState } from 'react';
+import { useForm } from '../../../hooks/UseForm';
 export const Sidebar = () => {
     const { auth, counter, setCounter } = useAuth();
-    const { form, changed } = useForm();
+    const { form, changed } = useForm;
     const [isSaved, setIsSaved] = useState('');
     let token = localStorage.getItem('token');
     const savePublication = async (e) => {
@@ -100,7 +100,7 @@ export const Sidebar = () => {
                         </div>
 
                         <div className="general-info__container-names">
-                            <a href="#" className="container-names__name">{auth.name} {auth.surname}</a>
+                            <Link to={"/network/profile/" + auth._id} className="container-names__name">{auth.name} {auth.surname}</Link>
                             <p className="container-names__nickname">{auth.nick}</p>
                         </div>
                     </div>
@@ -108,24 +108,24 @@ export const Sidebar = () => {
                     <div className="profile-info__stats">
 
                         <div className="stats__following">
-                            <NavLink to={'/network/following'} className="following__link">
+                            <Link to={'/network/following/' + auth._id} className="following__link">
                                 <span className="following__title">Siguiendo</span>
                                 <span className="following__number">{counter.following}</span>
-                            </NavLink>
+                            </Link>
                         </div>
                         <div className="stats__following">
-                            <NavLink to={'/network/followers'} className="following__link">
+                            <Link to={'/network/followers/' + auth._id} className="following__link">
                                 <span className="following__title">Seguidores</span>
                                 <span className="following__number">{counter.followed}</span>
-                            </NavLink>
+                            </Link>
                         </div>
 
 
                         <div className="stats__following">
-                            <a href="#" className="following__link">
+                            <Link to={"/network/profile/" + auth._id} className="following__link">
                                 <span className="following__title">Publicaciones</span>
                                 <span className="following__number">{counter.publications}</span>
-                            </a>
+                            </Link>
                         </div>
 
 

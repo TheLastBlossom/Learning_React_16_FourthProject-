@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Global } from '../../helpers/Global';
 import { UserList } from '../layout/private/user/UserList';
 import useAuth from "../../hooks/useAuth";
-import { getProfile } from '../../helpers/GetProfile';
+import { GetProfile } from '../../helpers/GetProfile';
+import { useParams } from 'react-router-dom';
 export const Following = () => {
     const [users, setUsers] = useState([]);
     const [profile, setProfile] = useState([]);
@@ -12,9 +13,9 @@ export const Following = () => {
     const [following, setFollowing] = useState([]);
     const { auth } = useAuth();
     let token = localStorage.getItem('token');
-
+    const params = useParams();
     const getUsers = async (nextPage = 1) => {
-        const urlUserList = Global.baseUrlApi + '/follow/following/' + auth._id + '/' + nextPage;
+        const urlUserList = Global.baseUrlApi + '/follow/following/' + params.userId + '/' + nextPage;
         setLoading(true);
         let requestUL = await fetch(urlUserList, {
             method: 'GET',
@@ -47,7 +48,7 @@ export const Following = () => {
     }
 
     useEffect(() => {
-        getProfile(auth._id, setProfile);
+        GetProfile(auth._id, setProfile);
         getUsers(1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);  

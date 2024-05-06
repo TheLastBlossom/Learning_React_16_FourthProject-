@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Link } from 'react-router-dom';
 import avatar from '../../../../assets/img/user.png';
 import { Global } from '../../../../helpers/Global';
 import useAuth from "../../../../hooks/useAuth";
@@ -59,6 +60,8 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
         setLoading(false);
 
     }
+
+    
     return (
         <>
             <div className="content__posts">
@@ -69,18 +72,18 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
                         <div className="post__container">
 
                             <div className="post__image-user">
-                                <a href="#" className="post__image-link">
+                                <Link to={"/network/profile/"+user._id} className="post__image-link">
                                     {user.image != 'default_img.png' && <img src={Global.baseUrlApi + '/user/avatar/' + user.image} className="post__user-image" alt="Foto de perfil" />}
                                     {user.image == 'default_img.png' && <img src={avatar} className="post__user-image" alt="Foto de perfil" />}
-                                </a>
+                                </Link>
                             </div>
 
                             <div className="post__body">
 
                                 <div className="post__user-info">
-                                    <a href="#" className="user-info__name">{user.name} {user.surname}</a>
+                                    <Link to={"/network/profile/"+user._id} className="user-info__name">{user.name} {user.surname}</Link>
                                     <span className="user-info__divider"> | </span>
-                                    <a href="#" className="user-info__create-date">{user.created_at}</a>
+                                    <Link to={"/network/profile/"+user._id} className="user-info__create-date">{user.created_at}</Link>
                                 </div>
                                 <h4 className="post__content">{user.bio}</h4>
 
@@ -91,7 +94,7 @@ export const UserList = ({ users, loading, setLoading, following, setFollowing, 
 
 
                         {auth._id != user._id && <div className="post__buttons">
-                            {following.includes(user._id) ? <button className="post__button" onClick={() => unfollow(user._id)}>
+                            {(following !=null && following.includes(user._id)) ? <button className="post__button" onClick={() => unfollow(user._id)}>
                                 Unfollow
                             </button> : <button onClick={() => newFollow(user._id)} className="post__button post__button--green">
                                 Follow

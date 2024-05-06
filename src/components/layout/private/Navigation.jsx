@@ -39,18 +39,18 @@ export const Navigation = () => {
 
             <ul className="container-lists__list-end">
                 <li className="list-end__item">
-                    <a href="#" className="list-end__link-image">
+                    <NavLink className="list-end__link-image">
                     {auth.image !='default_img.png' &&  <img src={Global.baseUrlApi + '/user/avatar/'+auth.image} className="list-end__img" alt="Foto de perfil" />}
                                 {auth.image =='default_img.png' &&  <img src={avatar} className="list-end__img" alt="Foto de perfil" />}
-                    </a>
+                    </NavLink>
                 </li>
                 <li className="list-end__item">
-                    <a href="#" className="list-end__link">
+                    <NavLink to={"/network/profile/"+auth._id} className="list-end__link">
                         <span className="list-end__name">{auth.nick}</span>
-                    </a>
+                    </NavLink>
                 </li>
                 <li className="list-end__item">
-                    <NavLink to='/network/config' className="list-end__link">
+                    <NavLink to={"/network/profile/"+auth._id} className="list-end__link">
                         <i className="fa-solid fa-gear"></i>
                         <span className="list-end__name">Settings</span>
                     </NavLink>
